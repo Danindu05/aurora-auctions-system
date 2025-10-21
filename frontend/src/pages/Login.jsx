@@ -1,59 +1,89 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { Lock, Mail } from "lucide-react";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import Button from "../components/Button.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login details:", { email, password });
-    // TODO: Add login API call
-  };
+const Login = () => {
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await login(data);
+      toast.success("Welcome back to Aurora Auctions");
+      navigate("/");
+    } catch (error) {
+      console.error("Login failed", error);
+      toast.error(error?.response?.data?.message || "Invalid credentials");
+    }
+  });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-          />
+    <div className="relative flex min-h-[80vh] items-center justify-center bg-hero-pattern py-16">
+      <Toaster position="top-right" />
+      <div className="card-lux w-full max-w-md space-y-8 p-10 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lux">
+          <Lock className="h-6 w-6" />
         </div>
-
-        <div className="mb-6">
-          <label className="block text-gray-700 mb-2">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-          />
+        <div className="space-y-2">
+          <h1 className="font-playfair text-3xl text-gray-900">Welcome back</h1>
+          <p className="text-sm text-gray-500">Sign in to continue your bidding journey.</p>
         </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Login
-        </button>
-
-        <p className="text-sm text-center mt-4">
-          Don’t have an account?{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
-            Register
-          </a>
+        <form className="space-y-5 text-left" onSubmit={onSubmit}>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">Email</label>
+            <div className="flex items-center rounded-full border border-emerald-100 bg-white px-4">
+              <Mail className="h-4 w-4 text-emerald-600" />
+              <input
+                type="email"
+                className="w-full border-none bg-transparent px-3 py-3 text-sm focus:outline-none"
+                placeholder="you@example.com"
+                {...register("email", { required: true })}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">Password</label>
+            <div className="flex items-center rounded-full border border-emerald-100 bg-white px-4">
+              <Lock className="h-4 w-4 text-emerald-600" />
+              <input
+                type="password"
+                className="w-full border-none bg-transparent px-3 py-3 text-sm focus:outline-none"
+                placeholder="Your password"
+                {...register("password", { required: true })}
+              />
+            </div>
+          </div>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
+          </Button>
+        </form>
+        <p className="text-sm text-gray-500">
+          Don't have an account? <button className="font-medium text-emerald-700" onClick={() => navigate("/register")}>Create one</button>
         </p>
-      </form>
+      </div>
     </div>
   );
-}
+};
+
+export default Login;
