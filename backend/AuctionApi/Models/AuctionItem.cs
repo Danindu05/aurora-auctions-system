@@ -17,7 +17,7 @@ namespace AuctionApi.Models
 
         public decimal StartingPrice { get; set; }
 
-        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         
 
@@ -27,6 +27,10 @@ namespace AuctionApi.Models
         public DateTime? BidEndTime { get; set; }
 
         public int UserId { get; set; }
+        public User User { get; set; } = null!;
+
+        public List<Bid> Bids { get; set; } = new();
+        public bool IsClosed { get; set; } = false;
 
         public string? ImageUrl { get; set; }
 
