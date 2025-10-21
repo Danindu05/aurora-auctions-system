@@ -1,0 +1,32 @@
+:root {
+  --color-background: #ffffff;
+  --color-surface: #f9f9f9;
+  --color-text: #222222;
+  --color-emerald: #046b4f;
+  --color-gold: #d4af37;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.gradient-emerald {
+  background: linear-gradient(135deg, rgba(4, 107, 79, 0.12), rgba(212, 175, 55, 0.2));
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+.bg-gold {
+  background-color: var(--color-gold);
+}
+
+.border-emerald {
+  border-color: rgba(4, 107, 79, 0.2);
+}
+
+.shadow-lux {
+  box-shadow: 0 25px 50px -12px rgba(4, 107, 79, 0.25);
+}
